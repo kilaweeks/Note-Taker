@@ -1,12 +1,13 @@
-const db = require("./db/db.json")
+let db = require("./db/db.json")
 const fs = require("fs");
 const path = require("path");
+const uniqid = require('uniqid');
 
 const express = require("express");
 const app = express();
 const port = process.env.PORT || 3000; 
 
-// converts json to javascript
+// creates req.body as json object
 app.use(express.json()); 
 
 // connects css file 
@@ -16,7 +17,7 @@ app.use(express.static(path.join(__dirname, 'public')));
 app.get("/notes", (req, res) => {
     res.sendFile(path.resolve("./public/notes.html"))
 }); 
-
+// sends content from db.json file 
 app.get("/api/notes", (req, res) => {
     res.json(db)
 }); 
@@ -24,8 +25,19 @@ app.get("/api/notes", (req, res) => {
 // adds note 
 app.post("/api/notes", (req, res) => {
     const data = req.body; 
-    db.push(data); 
+    // adds unique id to note
+    db.push({...data, id: uniqid()}); 
 
+    fs.writeFileSync("./db/db.json", JSON.stringify(db)); 
+    // terminates request
+    res.json(db)
+})
+// deletes note 
+app.delete("/api/notes/:id", (req, res) => {
+    const id = req.params.id; 
+    db = db.filter((note) => {
+        return note.id !== id; 
+    })
     fs.writeFileSync("./db/db.json", JSON.stringify(db)); 
     // terminates request
     res.json(db)
