@@ -24,6 +24,8 @@ http://localhost:3000
 
 ## Images
 
+![Screenshot](./public/assets/img/screenshot-1.png)
+![Screenshot](./public/assets/img/screenshot-2.png)
 
 ## Technologies
 
